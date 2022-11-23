@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -14,6 +15,9 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 
   @Autowired
   private UserDAO userDAO;
+
+  @Autowired
+  private PasswordEncoder encoder;
 
   @Override
   public Authentication authenticate(Authentication auth) throws AuthenticationException {
@@ -23,9 +27,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
       User user = userDAO.getUserByName(auth.getName()).get();
 
       //verificando password
-      System.out.println("SENHA DO DTO: " + auth.getCredentials().toString());
-      System.out.println("SENHA DO CLIENTE NO BANCO: " +user.getPassword());
-      if(user.getPassword().equalsIgnoreCase(auth.getCredentials().toString())){
+      if(encoder.matches(auth.getCredentials().toString(),user.getPassword())){
         return auth;
       }
 

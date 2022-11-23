@@ -30,9 +30,6 @@ public class AuthenticationController{
   @PostMapping("/auth")
   public ResponseEntity<TokenDTO> authentication(@RequestBody LoginFormDTO loginFormDTO){
 
-
-    loginFormDTO.setPassword(encoder.encode(loginFormDTO.getPassword()));
-    System.out.println(loginFormDTO.getPassword());
     UsernamePasswordAuthenticationToken dadosLogin = loginFormDTO.converter();
 
     try
