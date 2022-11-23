@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,10 +24,17 @@ public class AuthenticationController{
   @Autowired
   private TokenService tokenService;
 
+  @Autowired
+  private PasswordEncoder encoder;
+
   @PostMapping("/auth")
   public ResponseEntity<TokenDTO> authentication(@RequestBody LoginFormDTO loginFormDTO){
 
+
+    loginFormDTO.setPassword(encoder.encode(loginFormDTO.getPassword()));
+    System.out.println(loginFormDTO.getPassword());
     UsernamePasswordAuthenticationToken dadosLogin = loginFormDTO.converter();
+
     try
     {
       Authentication authentication = authManager.authenticate(dadosLogin);
@@ -36,7 +44,6 @@ public class AuthenticationController{
     }
     catch (AuthenticationException e)
     {
-      System.out.println("ERRO AQUI");
       System.out.println(e);
       return ResponseEntity.badRequest().build();
     }
