@@ -20,14 +20,15 @@ public class TokenService {
   private String secret;
 
   public String gerarToken(Authentication authentication){
-    User user = (User) authentication.getPrincipal();
+    //User user = (User) authentication.getPrincipal(); -> está dando erro na hora de converter
+    //authentication.getPrincipal().toString() -> retorna o email que veio da requisição
 
     Date today =  new Date();
     Date dateExpiration = new Date(today.getTime() + Long.parseLong(expiration));
 
     return Jwts.builder()
             .setIssuer("API DO FORUM DA ALURA")
-            .setSubject(user.getUsername())
+            .setSubject(authentication.getPrincipal().toString())
             .setIssuedAt(today)
             .setExpiration(dateExpiration)
             .signWith(SignatureAlgorithm.HS256,secret)
